@@ -1,0 +1,65 @@
+*******************************************************
+* System Dynamics Model: Chronic Neglect & HF4Y Analysis
+* Platform: Vensim DSS / PLE
+* Author: [Your Name]
+* Corresponding Paper: Breaking the Cycle of Chronic Neglect
+*******************************************************
+
+*** Control Parameters ***
+Simulation Time = 100 Months
+Time Step = 0.125 Months
+Integration Type = Euler
+
+*** Stocks (State Variables) ***
+
+Target: Allostatic_Load
+Description: Accumulated physiological stress from resource deprivation and environmental threats.
+Equation: INTEGRAL(Stress_Accumulation - Stress_Recovery, Initial_Load)
+Initial_Load = 0.2
+
+Target: Resource_Deprivation
+Description: The state of lacking essential survival resources (housing, food, etc.).
+Equation: INTEGRAL(Depletion_Rate - Resource_Acquisition, Initial_Deprivation)
+Initial_Deprivation = 0.5
+
+Target: Social_Capital
+Description: Connection to social support networks and trust levels.
+Equation: INTEGRAL(Social_Reconnection - Social_Withdrawal, Initial_Social_Capital)
+Initial_Social_Capital = 0.5
+
+*** Flows (Rates of Change) ***
+
+Target: Stress_Accumulation
+Equation: (Resource_Deprivation * Stress_Sensitivity) + (Rule_Tightening_Impact * Shelter_Residence_Status)
+
+Target: Stress_Recovery
+Equation: (Allostatic_Load / Recovery_Time) * Housing_Stability_Factor
+
+Target: Survival_Crime_Rate
+Description: The flow of committing crimes for survival (Theft, Survival Sex, etc.)
+Equation: Base_Crime_Rate * Probability_of_Crime
+
+*** Auxiliary Variables & Functions ***
+
+Target: Probability_of_Crime
+Description: Logistic function determining crime probability based on brain load.
+Equation: (1 / (1 + EXP( -Steepness_k * (Allostatic_Load - Neuro_Threshold) ) )) * (1 - Resilience)
+Param: Steepness_k = 5.0
+Param: Neuro_Threshold = 0.6
+Param: Resilience = 0.2 (Baseline)
+
+Target: Shelter_Residence_Status
+Description: 1 if in shelter, 0 if on street.
+Equation: IF THEN ELSE( Resources < 0.2, 1, 0)
+
+Target: Iatrogenic_Effect_Switch
+Description: Policy switch. 1 = Current System (Conditional), 0 = HF4Y (Unconditional).
+Value: 1 
+
+Target: Housing_Stability_Factor
+Description: Effect of HF4Y intervention.
+Equation: IF THEN ELSE( Iatrogenic_Effect_Switch = 0, 2.0, 0.5 )
+
+*******************************************************
+* Note: This pseudo-code represents the core logic of the R1, R2, and B1 loops described in the manuscript.
+*******************************************************
